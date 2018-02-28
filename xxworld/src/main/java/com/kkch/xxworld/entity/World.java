@@ -1,4 +1,4 @@
-package com.kkch.xxworld.bean;
+package com.kkch.xxworld.entity;
 
 import java.util.Calendar;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ public class World {
 	
 	public String getDate() {
 		Calendar calendar = Calendar.getInstance();
-		return calendar.get(Calendar.HOUR_OF_DAY)+"点"+calendar.get(Calendar.MINUTE)+"分";
+		return calendar.get(Calendar.HOUR_OF_DAY)+"时"+calendar.get(Calendar.MINUTE)+"分";
 	}
 
 	@Override

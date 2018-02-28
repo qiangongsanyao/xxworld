@@ -1,4 +1,4 @@
-package com.kkch.xxworld.bean;
+package com.kkch.xxworld.entity;
 
 public class MapBlock {
 
