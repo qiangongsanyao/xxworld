@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MsgReceiver {
 
-	@JmsListener(destination="server")
+//	@JmsListener(destination="server")
 	public void reserve(String message) {
 		System.out.println("收到消息："+message);
 	}
