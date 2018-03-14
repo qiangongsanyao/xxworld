@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="refresh" content="1;url=/login/input" />
 <title>仙侠世界</title>
 <style type="text/css">
 body {
@@ -19,12 +20,7 @@ a:link{
 </head>
 <body>
 <p>
-<span th:if="${map != null}" >
-	当前地图为:
-</span>
-<span th:if="${map == null}" >
-	页面失效
-</span>
+请重新登陆.....
 </p>
 </body>
 </html>

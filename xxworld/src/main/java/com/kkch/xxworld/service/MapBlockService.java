@@ -27,5 +27,10 @@ public interface MapBlockService {
 	void freshMaps();
 	
 	String format(MapBlock mapBlock);
+
+	String getWestName(Integer mapId);
+	String getEastName(Integer mapId);
+	String getNorthName(Integer mapId);
+	String getSouthName(Integer mapId);
 	
 }
