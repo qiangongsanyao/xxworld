@@ -14,8 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 
-@Entity@
-Inheritance(strategy=InheritanceType.SINGLE_TABLE)//选择继承策略
+@Entity
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)//选择继承策略
 @DiscriminatorColumn(name="type")//配置鉴别器
 @DiscriminatorValue("0")
 public class Item {

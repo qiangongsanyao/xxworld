@@ -12,4 +12,8 @@ public interface RoleService {
 
 	Role findById(Integer id);
 
+	boolean queryName(String rolename);
+
+	Role getRole(int id);
+
 }

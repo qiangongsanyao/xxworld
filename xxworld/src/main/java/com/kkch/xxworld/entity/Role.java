@@ -1,13 +1,13 @@
 package com.kkch.xxworld.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -21,8 +21,9 @@ public class Role {
 	@Column(unique=true)
 	protected String name;
 	protected Sex sex;
-	
-	@Embedded
+
+	@OneToOne
+    @JoinColumn(name="level_id")
 	protected Level level;
 	
 	@OneToOne
@@ -33,7 +34,18 @@ public class Role {
 	protected Backpack backpack;
 	
 	protected Integer mapId;
+
+	@Transient
+	protected Runtime runtime = new Runtime();
 	
+	public Runtime getRuntime() {
+		return runtime;
+	}
+
+	public void setRuntime(Runtime runtime) {
+		this.runtime = runtime;
+	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kkch.xxworld.dao.MapblockRepository;
 import com.kkch.xxworld.entity.MapBlock;
@@ -15,21 +16,48 @@ import com.kkch.xxworld.exception.ImmovableException;
 import com.kkch.xxworld.service.MapBlockService;
 
 @Service
-public class MapBlockServiceImpl implements MapBlockService{
+public class MapBlockServiceImpl implements MapBlockService {
 
 	@Autowired
 	MapblockRepository mapblockRepository; 
 	
 	private Map<Integer, MapBlock> maps;
 	
+	private volatile int lastVersion;
+	
+	private volatile int version = 1;
+	
+	
+	
+	public int getLastVersion() {
+		return lastVersion;
+	}
+
+	public void setLastVersion(int lastVersion) {
+		this.lastVersion = lastVersion;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
 	@Override
-	public void freshMaps() {
+	@Transactional
+	public synchronized void freshMaps() {
 		maps = Collections.unmodifiableMap(mapblockRepository.findAll().stream().collect(Collectors.toMap(MapBlock::getId, Function.identity())));
+		lastVersion = version;
 	}
 
 	@Override
 	public MapBlock getMap(Role role) {
 		Integer id = role.getMapId();
+		if(version>lastVersion) {
+			freshMaps();
+		}
 		if(maps.get(id)==null) {
 			id = 1;
 		}
@@ -137,4 +165,65 @@ public class MapBlockServiceImpl implements MapBlockService{
 		MapBlock tm = get(mapBlock.getSouthid());
 		role.setMapId(tm.getId());
 	}
+
+	@Override
+	public String getWestName(Integer mapId) {
+		try {
+			MapBlock mapBlock = get(mapId);
+			if(mapBlock!=null) {
+				MapBlock tm = get(mapBlock.getWestid());
+				if(tm!=null)
+					return tm.getName();
+			}
+		} catch (ImmovableException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getEastName(Integer mapId) {
+		try {
+			MapBlock mapBlock = get(mapId);
+			if(mapBlock!=null) {
+				MapBlock tm = get(mapBlock.getEastid());
+				if(tm!=null)
+					return tm.getName();
+			}
+		} catch (ImmovableException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getNorthName(Integer mapId) {
+		try {
+			MapBlock mapBlock = get(mapId);
+			if(mapBlock!=null) {
+				MapBlock tm = get(mapBlock.getNorthid());
+				if(tm!=null)
+					return tm.getName();
+			}
+		} catch (ImmovableException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String getSouthName(Integer mapId) {
+		try {
+			MapBlock mapBlock = get(mapId);
+			if(mapBlock!=null) {
+				MapBlock tm = get(mapBlock.getSouthid());
+				if(tm!=null)
+					return tm.getName();
+			}
+		} catch (ImmovableException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

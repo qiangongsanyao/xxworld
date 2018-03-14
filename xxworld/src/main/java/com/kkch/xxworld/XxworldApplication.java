@@ -6,13 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jms.core.JmsTemplate;
 
 import com.kkch.xxworld.dao.UserRepository;
+import com.kkch.xxworld.service.MapBlockService;
 
 @SpringBootApplication
 public class XxworldApplication{
 
-	@Autowired
-	UserRepository userRepository;
-	
 	@Autowired
 	JmsTemplate jmsTemplate;
 	
