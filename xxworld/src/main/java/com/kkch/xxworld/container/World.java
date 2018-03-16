@@ -9,6 +9,8 @@ public class World {
 	@Autowired
 	ExecutorContainer executorContainer;
 	
-	
+	public void submit(Runnable runnable) {
+		executorContainer.putEasyTask(runnable);
+	}
 	
 }

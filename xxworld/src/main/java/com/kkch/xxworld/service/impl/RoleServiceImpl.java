@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kkch.xxworld.dao.BackpackRepository;
 import com.kkch.xxworld.dao.LevelRepository;
 import com.kkch.xxworld.dao.RoleRepository;
+import com.kkch.xxworld.dao.StatusRepository;
 import com.kkch.xxworld.dao.StorageRepository;
 import com.kkch.xxworld.entity.Role;
+import com.kkch.xxworld.entity.Status;
 import com.kkch.xxworld.service.RoleService;
 
 @Service
@@ -24,12 +26,15 @@ public class RoleServiceImpl implements RoleService {
 	BackpackRepository backpackRepository;
 	@Autowired
 	LevelRepository levelRepository;
+	@Autowired
+	StatusRepository statusRepository;
 	
 	public RoleServiceImpl() {}
 
 	@Override
 	@Transactional
 	public Role init(Role role) {
+		statusRepository.save(role.getStatus());
 		levelRepository.save(role.getLevel());
 		backpackRepository.save(role.getBackpack());
 		storageRepository.save(role.getStorage());
@@ -43,7 +48,12 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Role findByName(String name) {
-		return roleRepository.findByName(name);
+		Status status = statusRepository.findOneByName(name);
+		if(status!=null) {
+			return roleRepository.findOne(status.getRole().getId());
+		}else {
+			return null;
+		}
 	}
 
 	@Override
@@ -53,14 +63,13 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public boolean queryName(String rolename) {
-		return roleRepository.findByName(rolename)!=null;
+		return findByName(rolename)!=null;
 	}
 
 	@Override
-	public Role getRole(int id) {
-		Role role = findById(id);
-		role.getRuntime().setRuntimeUUID(UUID.randomUUID().toString().replaceAll("-", ""));
-		return role;
+	public void freshStatus(Role role) {
+		role.setLevel(levelRepository.findOne(role.getLevel().getId()));
+		role.setStatus(statusRepository.findOne(role.getStatus().getId()));
 	}
 
 }

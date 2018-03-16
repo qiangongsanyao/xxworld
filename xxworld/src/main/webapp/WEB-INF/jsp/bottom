@@ -1,0 +1,9 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<a href="/game/fresh?${ urltail }">刷新</a>|<a href="/game/city?${ urltail }">地图</a>|<a href="/game/bag?${ urltail }">行囊</a><br/>
+<a href="/game/chat?${ urltail }">传音</a>|<a href="/game/friend?${ urltail }">道友</a>|<a href="/game/mail?${ urltail }">飞书</a><br/>
+<a href="/game/status?${ urltail }">状态</a>|<a href="/game/house?${ urltail }">仙府</a>|<a href="/game/league?${ urltail }">仙盟</a><br/>
+<a href="/game/skill?${ urltail }">仙术</a>|<a href="/game/task?${ urltail }">任务</a>|<a href="/game/setting?${ urltail }">设置</a><br/>
+<a href="/game/msg?${ urltail }">仙讯</a>|<a href="/game/happy?${ urltail }">福地洞天</a>
+<br/>
+<br/>
+<a href='/game/back?${ urltail }'>返回首页</a>

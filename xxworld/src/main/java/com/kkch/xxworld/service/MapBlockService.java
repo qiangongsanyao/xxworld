@@ -1,5 +1,7 @@
 package com.kkch.xxworld.service;
 
+import java.util.ArrayList;
+
 import com.kkch.xxworld.entity.MapBlock;
 import com.kkch.xxworld.entity.Role;
 import com.kkch.xxworld.exception.ImmovableException;
@@ -32,5 +34,13 @@ public interface MapBlockService {
 	String getEastName(Integer mapId);
 	String getNorthName(Integer mapId);
 	String getSouthName(Integer mapId);
+
+	Iterable<MapBlock> getShows();
+	
+	void goTo(Role role, int mapId) throws ImmovableException;
+
+	MapBlock getMapAndSetMap(Role arole);
+
+	ArrayList<Role> roles(Role role);
 	
 }

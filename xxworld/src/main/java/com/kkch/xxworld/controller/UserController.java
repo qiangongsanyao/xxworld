@@ -83,6 +83,7 @@ public class UserController {
 			rrs.addRole(username, rolename, s);
 			try {
 				List<Role> rolelist =  rrs.getRoles((String)request.getSession().getAttribute("username"));
+				rolelist.forEach(enterService::setUUID);
 				Role[] roles = new Role[rolelist.size()];
 				roles = rolelist.toArray(roles);
 				request.getSession().setAttribute("roles", roles);
@@ -113,6 +114,8 @@ public class UserController {
 			return "user-input";
 		}
 	}
+	
+	
 
 	private boolean validate(HttpServletRequest request,Model model) {
 		String username = request.getParameter("username");

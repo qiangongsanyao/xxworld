@@ -26,6 +26,8 @@ public class Item {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	private int property = 0;
+	
 	private String name;	
 	
 	private int num = 1;
@@ -36,6 +38,14 @@ public class Item {
 	
 	private int peerWeight = 10;
 	
+	public int getProperty() {
+		return property;
+	}
+
+	public void setProperty(int property) {
+		this.property = property;
+	}
+
 	public Item(String name) {
 		super();
 		this.name = name;

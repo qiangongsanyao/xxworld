@@ -9,5 +9,7 @@ import com.kkch.xxworld.entity.RoleRecord;
 public interface RoleRecordRepository extends JpaRepository<RoleRecord, Integer> {
 
 	List<RoleRecord> findByUserName(String username);
+	
+	RoleRecord findOneByRoleId(int id);
 
 }

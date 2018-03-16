@@ -18,9 +18,9 @@ public class Role {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected int id;
-	@Column(unique=true)
-	protected String name;
-	protected Sex sex;
+	@OneToOne
+    @JoinColumn(name="status_id")
+	protected Status status;
 
 	@OneToOne
     @JoinColumn(name="level_id")
@@ -33,6 +33,7 @@ public class Role {
     @JoinColumn(name="backpack_id")
 	protected Backpack backpack;
 	
+	@Column(name="map_id")
 	protected Integer mapId;
 
 	@Transient
@@ -45,6 +46,10 @@ public class Role {
 	public void setRuntime(Runtime runtime) {
 		this.runtime = runtime;
 	}
+	
+	public void setLevel(Level level) {
+		this.level = level;
+	}
 
 	public void setId(Integer id) {
 		this.id = id;
@@ -55,18 +60,17 @@ public class Role {
 	}
 	
 	public String getName() {
-		return name;
+		return status.getName();
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+
 	public Level getLevel() {
 		return level;
 	}
 	
 	public Role(String name) {
 		super();
-		this.name = name;
+		status = new Status();
+		status.setName(name);
 		level = new Level(1, 0);
 		storage = new Storage();
 		backpack = new Backpack();
@@ -74,7 +78,7 @@ public class Role {
 	
 	public Role(String name,Sex sex) {
 		this(name);
-		this.sex = sex;
+		status.setSex(sex);
 		this.mapId = 1;
 	}
 	
@@ -87,11 +91,7 @@ public class Role {
 	}
 	
 	public Sex getSex() {
-		return sex;
-	}
-
-	public void setSex(Sex sex) {
-		this.sex = sex;
+		return status.getSex();
 	}
 
 	public void setStorage(Storage storage) {
@@ -102,9 +102,17 @@ public class Role {
 		this.backpack = backpack;
 	}
 	
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
-		return "Role [id=" + id + ", name=" + name + ", sex=" + sex + ", level=" + level
+		return "Role [id=" + id + ", name=" + status.getName() + ", sex=" + status.getSex() + ", level=" + level
 				+ ", \nstorage=" + storage
 				+ ", \nbackpack=" + backpack + "]";
 	}
@@ -116,6 +124,5 @@ public class Role {
 	public void setMapId(Integer mapId) {
 		this.mapId = mapId;
 	}
-
 	
 }

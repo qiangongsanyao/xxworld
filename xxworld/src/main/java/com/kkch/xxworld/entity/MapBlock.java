@@ -20,6 +20,8 @@ public class MapBlock {
 	private int westid;
 	private int eastid;
 	
+	private boolean showable;
+	
 	private boolean safety;
 	
 
@@ -54,8 +56,16 @@ public class MapBlock {
 	public boolean getSafety() {
 		return safety;
 	}
-
 	
+
+	public boolean isShowable() {
+		return showable;
+	}
+
+	public void setShowable(boolean showable) {
+		this.showable = showable;
+	}
+
 	@Override
 	public String toString() {
 		return "MapBlock [id=" + id + ", name=" + name + ", detail=" + detail + ", northid=" + northid + ", southid="

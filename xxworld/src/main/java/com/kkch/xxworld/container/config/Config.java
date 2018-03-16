@@ -3,8 +3,11 @@ package com.kkch.xxworld.container.config;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.kkch.xxworld.entity.Role;
 import com.kkch.xxworld.executor.ChangableExecutorImpl;
 import com.kkch.xxworld.executor.a.ChangableExecutor;
+import com.kkch.xxworld.pool.Pool;
+import com.kkch.xxworld.pool.impl.TimedPool;
 
 @SpringBootApplication
 public class Config {
@@ -29,5 +32,11 @@ public class Config {
 		changableExecutor.setTimeout(600*1000);
 		return changableExecutor;
 	}
+	
+	@Bean("enterpool")
+	public Pool<Role> roleEnterPool(){
+		return new TimedPool<>();
+	}
+	
 	
 }

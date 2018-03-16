@@ -1,5 +1,6 @@
 package com.kkch.xxworld.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kkch.xxworld.dao.MapblockRepository;
+import com.kkch.xxworld.dao.RoleRepository;
 import com.kkch.xxworld.entity.MapBlock;
 import com.kkch.xxworld.entity.Role;
 import com.kkch.xxworld.exception.ImmovableException;
+import com.kkch.xxworld.pool.RoleInMapblockPool;
 import com.kkch.xxworld.service.MapBlockService;
 
 @Service
@@ -20,8 +23,14 @@ public class MapBlockServiceImpl implements MapBlockService {
 
 	@Autowired
 	MapblockRepository mapblockRepository; 
+	@Autowired
+	RoleInMapblockPool roleInMapblockPool;
+	@Autowired
+	RoleRepository roleRepository;
 	
 	private Map<Integer, MapBlock> maps;
+	
+	private ArrayList<MapBlock> shows;
 	
 	private volatile int lastVersion;
 	
@@ -46,9 +55,20 @@ public class MapBlockServiceImpl implements MapBlockService {
 	}
 
 	@Override
+	public Iterable<MapBlock> getShows() {
+		return shows;
+	}
+
+	@Override
 	@Transactional
 	public synchronized void freshMaps() {
 		maps = Collections.unmodifiableMap(mapblockRepository.findAll().stream().collect(Collectors.toMap(MapBlock::getId, Function.identity())));
+		shows = new ArrayList<>();
+		for(MapBlock map:maps.values()) {
+			if(map.isShowable()) {
+				shows.add(map);
+			}
+		}
 		lastVersion = version;
 	}
 
@@ -134,13 +154,13 @@ public class MapBlockServiceImpl implements MapBlockService {
 	public void goEast(Role role) throws ImmovableException {
 		MapBlock mapBlock = get(role.getMapId());
 		MapBlock tm = get(mapBlock.getEastid());
-		role.setMapId(tm.getId());
+		setMap(role, tm);
 	}
 
 	public MapBlock get(Integer id) throws ImmovableException {
 		MapBlock mapBlock = maps.get(id);
 		if(mapBlock==null) {
-			throw new ImmovableException();
+			throw new ImmovableException("没有这张地图");
 		}
 		return mapBlock;
 	}
@@ -149,21 +169,21 @@ public class MapBlockServiceImpl implements MapBlockService {
 	public void goNorth(Role role) throws ImmovableException {
 		MapBlock mapBlock = get(role.getMapId());
 		MapBlock tm = get(mapBlock.getNorthid());
-		role.setMapId(tm.getId());
+		setMap(role, tm);
 	}
 
 	@Override
 	public void goWest(Role role) throws ImmovableException {
 		MapBlock mapBlock = get(role.getMapId());
 		MapBlock tm = get(mapBlock.getWestid());
-		role.setMapId(tm.getId());
+		setMap(role, tm);
 	}
 
 	@Override
 	public void goSouth(Role role) throws ImmovableException {
 		MapBlock mapBlock = get(role.getMapId());
 		MapBlock tm = get(mapBlock.getSouthid());
-		role.setMapId(tm.getId());
+		setMap(role, tm);
 	}
 
 	@Override
@@ -176,7 +196,7 @@ public class MapBlockServiceImpl implements MapBlockService {
 					return tm.getName();
 			}
 		} catch (ImmovableException e) {
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -191,7 +211,7 @@ public class MapBlockServiceImpl implements MapBlockService {
 					return tm.getName();
 			}
 		} catch (ImmovableException e) {
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -206,7 +226,7 @@ public class MapBlockServiceImpl implements MapBlockService {
 					return tm.getName();
 			}
 		} catch (ImmovableException e) {
-			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -221,9 +241,42 @@ public class MapBlockServiceImpl implements MapBlockService {
 					return tm.getName();
 			}
 		} catch (ImmovableException e) {
-			e.printStackTrace();
+			
 		}
 		return null;
+	}
+
+	@Override
+	public void goTo(Role role, int mapId) throws ImmovableException {
+		MapBlock tm = get(mapId);
+		setMap(role, tm);
+	}
+
+	@Transactional
+	private void setMap(Role role, MapBlock tm) {
+		role.setMapId(tm.getId());
+		roleInMapblockPool.enter(role, tm);
+		roleRepository.updateMapId(role.getId(), tm.getId());
+	}
+
+	@Override
+	public ArrayList<Role> roles(Role role){
+		int mapId = role.getMapId();
+		ArrayList<Role> roles= new ArrayList<>();
+		for(Role r:roleInMapblockPool.roles(mapId)) {
+			if(r.getId()!=(role.getId())) {
+				roles.add(r);
+			}
+		}
+		Collections.reverse(roles);
+		return roles;
+	}
+	
+	@Override
+	public MapBlock getMapAndSetMap(Role arole) {
+		MapBlock mapBlock = getMap(arole);
+		setMap(arole, mapBlock);
+		return mapBlock;
 	}
 
 }

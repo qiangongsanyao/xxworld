@@ -14,6 +14,6 @@ public interface RoleService {
 
 	boolean queryName(String rolename);
 
-	Role getRole(int id);
+	void freshStatus(Role role);
 
 }

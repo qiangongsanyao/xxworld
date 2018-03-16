@@ -59,4 +59,32 @@ public class RoleRecordServiceImpl implements RoleRecordService {
 		return roleRepository.findOne(rr.getId());
 	}
 
+	@Override
+	@Transactional
+	public List<Role> getRoles(Role arole) {
+		List<Role> roles = new ArrayList<>();
+		RoleRecord rrt = roleRecordRepository.findOneByRoleId(arole.getId());
+		String username = null;
+		if(rrt!=null) {
+			username = rrt.getUserName();
+		}
+		List<RoleRecord> rolerecords = roleRecordRepository.findByUserName(username);
+		System.out.println(rolerecords);
+		if(rolerecords==null||rolerecords.isEmpty()) {
+			
+		} else {
+			rolerecords.forEach(rr->{
+				try {
+					Role role = roleRepository.findOne(rr.getRoleId());
+					if(role!=null) {
+						roles.add(role);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		return roles;
+	}
+
 }

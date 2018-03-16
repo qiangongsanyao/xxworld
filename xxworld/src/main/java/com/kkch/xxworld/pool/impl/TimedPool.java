@@ -55,6 +55,10 @@ public class TimedPool<T> implements Pool<T>,Runnable {
 	@Override
 	public String put(T t) {
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		return put(t, uuid);
+	}
+
+	public String put(T t, String uuid) {
 		olock.writeLock().lock();
 		objectMap.put(uuid, t);
 		olock.writeLock().unlock();
@@ -91,12 +95,22 @@ public class TimedPool<T> implements Pool<T>,Runnable {
 				e.printStackTrace();
 			}
 			tlock.readLock().unlock();
-			olock.writeLock().lock();
-			timeoutuuids.forEach(objectMap::remove);
-			olock.writeLock().unlock();
-			tlock.writeLock().lock();
-			timeoutuuids.forEach(timeMap::remove);
-			tlock.writeLock().unlock();
+			if(!timeoutuuids.isEmpty()) {
+				tlock.writeLock().lock();
+				ArrayList<String> reovedtimeoutuuids = new ArrayList<>();
+				timeoutuuids.forEach(id->{
+					if(System.currentTimeMillis()-timeMap.get(id)>aliveTime) {
+						timeMap.remove(id);
+						reovedtimeoutuuids.add(id);
+					}
+				});
+				tlock.writeLock().unlock();
+				if(!reovedtimeoutuuids.isEmpty()) {
+					olock.writeLock().lock();
+					reovedtimeoutuuids.forEach(objectMap::remove);
+					olock.writeLock().unlock();
+				}
+			}
 			try {
 				Thread.sleep(freshMs);
 			} catch (InterruptedException e) {
@@ -104,6 +118,29 @@ public class TimedPool<T> implements Pool<T>,Runnable {
 			}
 		}
 		
+	}
+
+	public T getAndFresh(String uuid) {
+		olock.readLock().lock();
+		T t = objectMap.get(uuid);
+		olock.readLock().unlock();
+		tlock.writeLock().lock();
+		if(timeMap.containsKey(uuid)) {
+			timeMap.put(uuid, System.currentTimeMillis());
+		}else {
+			t = null;
+		}
+		tlock.writeLock().unlock();
+		return t;
+	}
+
+	public void remove(String uuid) {
+		tlock.writeLock().lock();
+		timeMap.remove(uuid);
+		tlock.writeLock().unlock();
+		olock.writeLock().lock();
+		objectMap.remove(uuid);
+		olock.writeLock().unlock();
 	}
 
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Count {
 
 	public static void main(String[] args) throws IOException {
-		String path = "C:\\Users\\CH\\git\\NIFG tagSNP Selection Program开发文件\\src";
+		String path = "C:\\Users\\CH\\git\\xxworld\\xxworld";
 		ArrayList<File> files = getFiles(path,".java");
 		int tln = 0;
 		int tcnum = 0;

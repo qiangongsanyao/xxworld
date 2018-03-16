@@ -23,27 +23,14 @@ a:link{color:blue;text-decoration:none;}
 <c:if test="${ uuid != null }">
 
 <c:set var="urltail" value="uuid=${ uuid }&t=${ t }" />
-<c:if test="${ unreachable != null }">
 	<%@include file="top"%>
-	${ unreachable }<br/>
-</c:if>
-	<c:if test="${ map != null }">
-	<c:if test="${ map.name != null }">
-		【<c:out value="${ map.name }"></c:out>】<a href="/game/fresh?${ urltail }">刷</a><br/>
-	</c:if>
-	<c:if test="${ map.detail != null }">
-		<c:out value="${ map.detail }"></c:out>
-	</c:if>
-	
+	附近人物:
 	<br/>
 	<c:if test="${ roles != null }">
-	<c:set var="size" value="${ fn:length(roles) }"></c:set>
-		
-		<c:if test="${ size > 0 }">
-			玩家:<a href="/game/lookrole?roleid=${ roles[0].id }&${ urltail }">${ roles[0].name }</a><c:if test="${ size > 1 }">|<a href="/game/lookrole?roleid=${ roles[1].id }&${ urltail }">${ roles[1].name }</a></c:if><br/>
-			<c:if test="${ size > 2 }"><a href="/game/moreroles?pmr=morerole&${ urltail }">更多..</a><br/></c:if>
-		</c:if>
-		
+		<c:forEach var="role" items="${ roles }">
+			<a href="/game/lookrole?roleid=${ role.id }&${ urltail }">${ role.name }</a><c:if test="${ role.sex == 'male' }">♂</c:if><c:if test="${ role.sex == 'female' }">♀</c:if><br/>
+		</c:forEach>
+		<br/>
 	</c:if>
 	<c:if test="${ west !=null || east !=null || south !=null || north !=null }">
 		【地图出口】<br/>
@@ -64,7 +51,6 @@ a:link{color:blue;text-decoration:none;}
 	<br/>
 	<%@include file="bottom"%>
 	
-	</c:if>
 </c:if>
 
 <c:if test="${ uuid == null }">

@@ -45,6 +45,14 @@ public class Level {
 	public String toString() {
 		return "Level [level=" + level + ", exp=" + exp + "]";
 	}
+
+	public Integer getId() {
+		return id;
+	}
+	
+	public int getMaxExp() {
+		return level * level * 1000 + 9000;
+	}
 	
 	
 }

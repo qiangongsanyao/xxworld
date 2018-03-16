@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.kkch.xxworld.entity.Item;
 import com.kkch.xxworld.entity.Role;
-import com.kkch.xxworld.entity.Sex;
 import com.kkch.xxworld.exception.NoSoMuchException;
 import com.kkch.xxworld.exception.NoSuchItemException;
 import com.kkch.xxworld.exception.SaveFailException;
@@ -33,16 +32,16 @@ public class RoleServiceTest {
 	
 	@Before
 	public void before() {
-		Role role = new Role("恋骑士丶",Sex.male);
-		this.role = roleService.init(role);
-		Role role2 = new Role("恋骑士cc",Sex.male);
-		this.role2 = roleService.init(role2);
+		role = roleService.findById(1);
+		role2 = roleService.findById(2);
 	}
 	
 	@Test
 	public void test() throws SaveFailException, StorageFullException, NoSuchItemException, NoSoMuchException {
-		backPackService.receive(role, 100000);
+		backPackService.receive(role, 100000000);
 		backPackService.receive(role2, 100000);
+		backPackService.receive(role, new Item("麻痹戒指"));
+		backPackService.receive(role, new Item("屠龙宝刀"));
 		backPackService.give(role, role2, 10000);
 	}
 	
